@@ -105,12 +105,8 @@ void sendData(struct processData p)
 {
     struct message msg;
     msg.mtype=5;
-    /////////////////////////////make this 4 lines a function later  ///////////////////////
-    msg.pData.arrivaltime=p.arrivaltime;
-    msg.pData.priority=p.priority;
-    msg.pData.runningtime=p.runningtime;
-    msg.pData.id=p.id;
-    ////////////////////////////////////////////////////////////////////////////////////////
+    PDcpy(&msg.pData,&p);
+
 
     // now I want to send 
     int sndval= msgsnd(msgqid, &msg,sizeof(struct message)-sizeof(long), !IPC_NOWAIT);
