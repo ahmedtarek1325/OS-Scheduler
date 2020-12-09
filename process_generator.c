@@ -19,7 +19,10 @@ int msgqid;
 void clearResources(int);
 void initateClock();
 void sendData(struct processData p);
+void sendData(struct processData p);
 
+/// copy process data function
+void PDcpy(struct processData* dest, struct processData* src);
 
 
 
@@ -84,6 +87,21 @@ void initateClock()
 
 }
 
+void scheduler()
+{
+    int pid=fork();
+    if (pid==-1)
+        perror("error in fork \n");
+    
+    if (pid==0)
+    {
+        char name[]="./scheduler.out";
+        char* argv[]={name,NULL};
+        execvp(name, &argv[0]);
+    }
+
+}
+
 
 void sendData(struct processData p)
 {
@@ -104,3 +122,10 @@ void sendData(struct processData p)
 }
 
 
+void PDcpy(struct processData* dest, struct processData* src)
+{
+    dest->arrivaltime=src->arrivaltime;
+    dest->priority=src->priority;
+    dest->runningtime=src->runningtime;
+    dest->id=src->id;
+}
