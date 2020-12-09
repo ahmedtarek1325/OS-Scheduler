@@ -1,13 +1,7 @@
 #include "headers.h"
-
+#include "queue.h"
+#include <string.h>
 //structing a message 
-struct processData
-{
-    int arrivaltime;
-    int priority;
-    int runningtime;
-    int id;
-};
 struct message
 {
 long mtype;
@@ -16,14 +10,13 @@ struct processData pData;
 
 int msgqid;
 
+void readinput(queue* temp);
 void clearResources(int);
 void initateClock();
 void sendData(struct processData p);
 void sendData(struct processData p);
 
 /// copy process data function
-void PDcpy(struct processData* dest, struct processData* src);
-
 
 
 int main(int argc, char * argv[])
@@ -31,6 +24,10 @@ int main(int argc, char * argv[])
     signal(SIGINT, clearResources);
     // TODO Initialization
     // 1. Read the input files.
+    queue *temp;
+    temp = malloc(sizeof(queue));
+    initialize(temp);
+    readinput(temp);
     // 2. Ask the user for the chosen scheduling algorithm and its parameters, if there are any.
     // 3. Initiate and create the scheduler and  clock processes.
     // 4. Use this function after creating the clock process to initialize clock
@@ -62,6 +59,7 @@ int main(int argc, char * argv[])
 
 
     // 7. Clear clock resources
+    free(temp);
     destroyClk(true);
 }
 
@@ -122,10 +120,48 @@ void sendData(struct processData p)
 }
 
 
-void PDcpy(struct processData* dest, struct processData* src)
+
+void readinput(queue* temp)
 {
-    dest->arrivaltime=src->arrivaltime;
-    dest->priority=src->priority;
-    dest->runningtime=src->runningtime;
-    dest->id=src->id;
+   int num;
+   FILE *fptr;
+   char str[255];
+   char* piece;
+   fptr = fopen("processes.txt","r");
+   
+   if(fptr == NULL)
+   {
+      printf("Error in oppening the file!");   
+      exit(1);             
+   }
+
+   while(fgets (str, 255, fptr) !=NULL)
+   {
+      struct processData A;
+       if (str[0]=='#')
+            {
+                printf("skipped\n");
+                continue;
+            }
+        piece=strtok(str,"\t");
+        num=atoi(piece);
+        A.id=num;
+        
+        piece=strtok(NULL,"\t");
+        num=atoi(piece);
+        A.arrivaltime=num;
+        
+        piece=strtok(NULL,"\t");
+        num=atoi(piece);
+        A.runningtime=num;
+
+        piece=strtok(NULL,"\t");
+        num=atoi(piece);
+        A.priority=num;
+
+        enqueue(temp,&A);
+   }
+
+   fclose(fptr);
 }
+
