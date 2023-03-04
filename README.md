@@ -1,4 +1,4 @@
-## To get time call:
+## To get time call, use:
 
 getClk();
 
